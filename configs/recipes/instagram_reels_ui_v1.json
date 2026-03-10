@@ -1,0 +1,15 @@
+{
+  "recipe_id": "instagram_reels_ui_v1",
+  "label": "instagram_reels_ui",
+  "steps": [
+    {
+      "name": "instagram_reels_ui_overlay",
+      "params": {
+        "template_path": "src/distortions/ui_overlay/assets/insta_ui_overlay_transp_template.png",
+        "opacity": 0.95,
+        "transparent_colors": [[0, 0, 0], [27, 25, 26], [28, 28, 28], [40, 40, 40], [49, 49, 49]],
+        "tolerance": 12
+      }
+    }
+  ]
+}

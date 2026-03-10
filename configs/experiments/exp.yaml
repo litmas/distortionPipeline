@@ -1,0 +1,14 @@
+global_seed: 12345
+variants: 1
+recipes:
+  - recipe_id: tiktok_hybrid_v1
+  - recipe_id: snapchat_text_overlay_v1
+  - recipe_id: jpeg_compress_v1
+  - recipe_id: resize_256_v1
+  - recipe_id: gaussian_blur_v1
+  - recipe_id: noise_v1
+  - recipe_id: lut_warm_v1
+  - recipe_id: instagram_reels_ui_v1
+images:
+  include_labels: ["dataset_1"]
+  max_images_per_label: 50

@@ -1,0 +1,23 @@
+{
+  "recipe_id": "snapchat_text_overlay_v1",
+  "label": "text_overlay",
+  "steps": [
+    {
+      "name": "text_overlay",
+      "params": {
+        "text": "SAMPLE",
+        "position": "random",
+        "font_size": 36,
+        "stroke_width": 2,
+        "fill": "white",
+        "stroke_fill": "black",
+        "opacity": 0.95,
+        "text_background": true,
+        "text_background_color": [180, 180, 180],
+        "text_background_opacity": 0.45,
+        "text_background_padding": 14,
+        "text_background_radius": 12
+      }
+    }
+  ]
+}

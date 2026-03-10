@@ -1,0 +1,7 @@
+{
+  "recipe_id": "lut_warm_v1",
+  "label": "lut_filter",
+  "steps": [
+    {"name": "lut_filter", "params": {"preset": "warm_01", "strength": 0.9}}
+  ]
+}

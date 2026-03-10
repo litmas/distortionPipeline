@@ -1,0 +1,8 @@
+{
+  "recipe_id": "tiktok_hybrid_v1",
+  "label": "hybrid",
+  "steps": [
+    {"name": "lut_filter", "params": {"preset": "warm_01", "strength": 1.0}},
+    {"name": "tiktok_ui_overlay", "params": {"template_path": "src/distortions/ui_overlay/assets/insta_ui_overlay_transp_template.png", "opacity": 1.0}}
+  ]
+}

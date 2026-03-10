@@ -1,0 +1,7 @@
+{
+  "recipe_id": "resize_256_v1",
+  "label": "resize",
+  "steps": [
+    {"name": "resize", "params": {"width": 256, "height": 256}}
+  ]
+}

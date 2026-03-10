@@ -1,0 +1,7 @@
+{
+  "recipe_id": "noise_v1",
+  "label": "noise",
+  "steps": [
+    {"name": "noise", "params": {"std": 10.0}}
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "recipe_id": "gaussian_blur_v1",
+  "label": "gaussian_blur",
+  "steps": [
+    {"name": "gaussian_blur", "params": {"sigma": 1.2}}
+  ]
+}

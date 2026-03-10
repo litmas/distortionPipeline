@@ -1,0 +1,7 @@
+{
+  "recipe_id": "jpeg_compress_v1",
+  "label": "jpeg",
+  "steps": [
+    {"name": "jpeg", "params": {"quality": 60}}
+  ]
+}
