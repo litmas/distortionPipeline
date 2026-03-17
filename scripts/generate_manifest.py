@@ -35,16 +35,18 @@ def is_rgb_list_series(values: Any) -> bool:
     return isinstance(values, list) and len(values) > 1 and all(is_rgb_list(v) for v in values)
 
 
+def is_grid_parameter(key: str, value: Any) -> bool:
+    if key == "word_pool":
+        return False
+    return isinstance(value, list) and not is_rgb_list(value) and not is_rgb_list_series(value)
+
+
 def expand_steps(steps: List[Dict[str, Any]]) -> List[List[Dict[str, Any]]]:
     grid_params: List[tuple[int, str, List[Any]]] = []
     for idx, step in enumerate(steps):
         params = step.get("params", {})
         for key, value in params.items():
-            if (
-                isinstance(value, list)
-                and not is_rgb_list(value)
-                and not is_rgb_list_series(value)
-            ):
+            if is_grid_parameter(key, value):
                 grid_params.append((idx, key, value))
 
     if not grid_params:

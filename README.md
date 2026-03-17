@@ -1,165 +1,294 @@
-# Distortion Pipeline (Thesis-Ready)
+# Distortion Pipeline
 
-A clean, deterministic image distortion pipeline built with Pillow and NumPy. It converts datasets into JSONL, expands distortion recipes into job manifests, and runs a reproducible pipeline with optional caching.
+This project is a lightweight, deterministic image-distortion pipeline designed for experiment workflows.
+It converts an image dataset into JSONL, expands recipe definitions into job manifests, applies
+reproducible augmentations, and writes outputs with caching.
 
-## Requirements
+The code is intentionally small and editable: recipes and experiment settings are plain JSON/YAML files.
 
-- Python 3.10+
-- Install dependencies:
+The pipeline is driven by a single experiment config (`configs/experiments/exp.yaml`): add/remove recipes there and regenerate the jobs manifest.
+
+## Quick start
+
+1. Create and activate a virtual environment.
+2. Install dependencies:
 
 ```bash
 pip install -r requirements.txt
 ```
+Use:
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+```
+or your preferred virtual environment flow.
 
-## Project Structure
-
-- `src/distortions/` – distortion modules (jpeg, resize, blur, noise, LUT-style, overlays)
-- `src/pipeline/` – registry, seeding, caching, manifest IO, apply pipeline
-- `scripts/` – CLI tools
-- `configs/recipes/` – recipe JSON files
-- `configs/experiments/` – experiment YAML files
-- `manifests/` – JSONL manifests and outputs
-- `data/cache/distorted/` – cache outputs (hashed)
-- `data/outputs/distorted/` – organized outputs by recipe/label
-
-## 1) Prepare Dataset JSONL
-
-Convert a folder of images into a JSONL manifest.
+3. Convert dataset to JSONL:
 
 ```bash
-python -m scripts.images_to_jsonl \
-  --input_dir /path/to/dataset \
+./.venv/bin/python -m scripts.images_to_jsonl \
+  --input_dir datasets \
   --output manifests/dataset.jsonl
 ```
 
-Labeling options:
-
-- Default: label is the subfolder name (e.g., `/dataset/real/*.jpg` → `label=real`)
-- CSV mapping:
+4. Generate jobs:
 
 ```bash
-python -m scripts.images_to_jsonl \
-  --input_dir /path/to/dataset \
-  --output manifests/dataset.jsonl \
-  --labels_csv /path/to/labels.csv
-```
-
-The CSV must include columns `image_id` or `filename`, and `label`.
-
-Optional base64 embedding:
-
-```bash
-python -m scripts.images_to_jsonl \
-  --input_dir /path/to/dataset \
-  --output manifests/dataset.jsonl \
-  --embed_base64
-```
-
-JSONL format (one line per image):
-
-```json
-{"image_id":"abc123","label":"real","path":"/abs/path/abc123.jpg"}
-```
-
-If base64 is enabled, `image_base64` is added.
-
-## 2) Define Distortion Recipes
-
-Each recipe lives in `configs/recipes/<recipe_id>.json`.
-
-Example:
-
-```json
-{
-  "recipe_id": "tiktok_hybrid_v1",
-  "label": "hybrid",
-  "steps": [
-    {"name":"lut_filter","params":{"preset":"warm_01","strength":0.7}},
-{"name":"tiktok_ui_overlay","params":{"template_path":"src/distortions/ui_overlay/assets/insta_ui_overlay_transp_template.png","opacity":0.9}},
-    {"name":"jpeg","params":{"quality":60}}
-  ]
-}
-```
-
-## 3) Create Experiment YAML
-
-Experiments select recipes and define image filters and variants.
-
-```yaml
-global_seed: 12345
-variants: 3
-recipes:
-  - recipe_id: tiktok_hybrid_v1
-  - recipe_id: snapchat_text_overlay_v1
-images:
-  include_labels: ["real", "fake"]
-  max_images_per_label: 200
-```
-
-Parameter grids are supported by listing parameter values:
-
-```json
-{"name":"jpeg","params":{"quality":[95,75,60]}}
-```
-
-The cartesian product of list parameters is expanded into separate recipe instances.
-
-## 4) Generate a Jobs Manifest
-
-```bash
-python -m scripts.generate_manifest \
+./.venv/bin/python -m scripts.generate_manifest \
   --dataset_jsonl manifests/dataset.jsonl \
   --recipes_dir configs/recipes \
   --experiment_yaml configs/experiments/exp.yaml \
   --out manifests/jobs.jsonl
 ```
 
-## 5) Run Distortions
+5. Run distortion pipeline:
 
 ```bash
-python -m scripts.run_distortions \
+./.venv/bin/python -m scripts.run_distortions \
   --manifest manifests/jobs.jsonl \
   --cache_dir data/cache/distorted \
   --out_dir data/outputs/distorted \
   --write_augmented_manifest manifests/jobs_with_paths.jsonl
 ```
 
-The augmented manifest includes:
+## Restart from a clean slate (recommended after config/recipe edits)
 
-- `distorted_path`
-- `cache_hit`
-- `cache_key`
-- `seed`
-- `steps`
+```bash
+# Remove generated manifests
+rm -f manifests/jobs.jsonl manifests/jobs_with_paths.jsonl
+rm -f manifests/jobs_debug.jsonl manifests/jobs_with_paths_debug.jsonl
+rm -f manifests/jobs_sample.jsonl manifests/jobs_with_paths_sample.jsonl
 
-## Determinism and Caching
+# Remove old outputs for selected recipe classes (optional, replace recipe id as needed)
+rm -rf data/outputs/distorted/tiktok_hybrid_v1
+rm -rf data/outputs/distorted/snapchat_text_overlay_v1
+rm -rf data/outputs/distorted/resize_256_v1
+rm -rf data/outputs/distorted/gaussian_blur_v1
+rm -rf data/outputs/distorted/noise_v1
+rm -rf data/outputs/distorted/lut_warm_v1
+rm -rf data/outputs/distorted/jpeg_compress_v1
 
-- Deterministic RNG seed:
-  - `seed = stable_hash(global_seed, image_id, recipe_id, variant)`
-- Cache key:
-  - `cache_key = hash(src_path + steps + seed + variant)`
-- Cache outputs are written to `data/cache/distorted/` and reused if present.
+# Optional full cache clear
+rm -rf data/cache/distorted
+mkdir -p data/cache/distorted
+```
 
-## Distortions Implemented
+Then regenerate and run again with the three core commands above.
 
-- `jpeg` (quality 1–100)
-- `resize` (width/height or scale)
-- `gaussian_blur` (sigma)
-- `noise` (Gaussian std)
-- `lut_filter` (presets: warm_01, cool_01, vintage_01)
-- `text_overlay` (position, font size, stroke, opacity)
-- `emoji_overlay` (PNG sticker with random position/scale/rotation)
-- `tiktok_ui_overlay` (PNG template with alpha)
-- `instagram_reels_ui_overlay` (PNG template with alpha)
+### Optional: clear one old recipe completely
+
+If you remove `instagram_reels_ui_v1` from `configs/experiments/exp.yaml`, you should also remove old files to avoid confusion:
+
+```bash
+rm -rf data/outputs/distorted/instagram_reels_ui_v1
+rm -rf data/cache/distorted/instagram_reels_ui_v1
+```
+
+Then regenerate jobs and run.
+
+## Project layout
+
+- `configs/`
+  - `recipes/`: recipe JSON files (what to run)
+  - `experiments/`: experiment YAML files (which recipes + run settings)
+- `manifests/`: intermediate dataset/job manifests (`.jsonl`) created by the scripts
+- `src/distortions/`: all distortion modules and base interface
+  - `ui_overlay/`: overlay distortions
+- `src/pipeline/`: registry, seeds, cache key logic, manifest IO, and apply orchestration
+- `scripts/`: CLI entry points
+- `tests/`: unit tests (registry, seeding, blur)
+- `data/outputs/`: generated output images
+- `data/cache/`: reusable cache files keyed by source + steps + seed + variant
+
+## Core flow
+
+1. `scripts.images_to_jsonl` scans `--input_dir` and writes records:
+   - `image_id`: filename stem
+   - `label`: inferred from parent folder or loaded from CSV
+   - `path`: absolute image path
+   - optional `image_base64` when `--embed_base64` is used
+2. `scripts.generate_manifest` reads:
+   - dataset JSONL (`manifests/dataset.jsonl`)
+   - all recipe JSON files in `configs/recipes/`
+   - experiment YAML (`configs/experiments/exp.yaml`)
+
+   It expands param grids in recipe steps (e.g. list-valued params) and creates one job per image/recipe/variant according to the experiment config.
+3. `scripts.run_distortions` reads each job, computes deterministic seed + cache key,
+   applies distortion steps via `src.pipeline.apply_distortions.apply_steps`, and writes:
+   - image file into `--out_dir`
+   - augmented job line to `--write_augmented_manifest`
+
+## Distortion modules currently available
+
+- `jpeg`: JPEG re-compress with `quality` (1-100)
+- `resize`: width/height or `scale`
+- `gaussian_blur`: blur with `sigma`
+- `noise`: Gaussian noise with `std`
+- `lut_filter`: lightweight color transforms (`warm_01`, `cool_01`, `vintage_01`)
+- `text_overlay`: draw configurable text
+- `emoji_overlay`: place sticker PNG with optional random position/scale/rotation (future extension ready)
+- `tiktok_ui_overlay`: available when included in active experiment recipes.
+- `instagram_reels_ui_overlay`: PNG-based overlay distortion
+
+All distortions implement the same interface in `src/distortions/base.py`:
+
+- `name`: module key used in recipe `steps`
+- `validate_params(...)`: per-distortion schema checks
+- `apply(image, rng, params)`: transform function
+
+The registry at `src/pipeline/registry.py` maps string names to classes used by the pipeline.
+
+## Recipe format
+
+Each recipe is a JSON file in `configs/recipes/<recipe_id>.json`:
+
+```json
+{
+  "recipe_id": "example_v1",
+  "label": "example",
+  "steps": [
+    {"name": "lut_filter", "params": {"preset": "warm_01", "strength": 0.7}},
+    {"name": "jpeg", "params": {"quality": 60}}
+  ]
+}
+```
+
+Lists in params are treated as a grid and expanded.
+
+Example grid in `params`:
+
+```json
+{"name": "jpeg", "params": {"quality": [95, 75, 60]}}
+```
+
+With this recipe plus `variants: 2`, each image can yield multiple outputs.
+
+## Experiment format
+
+`configs/experiments/exp.yaml` controls what is generated:
+
+```yaml
+global_seed: 12345
+variants: 1
+recipes:
+  - recipe_id: tiktok_hybrid_v1
+  - recipe_id: snapchat_text_overlay_v1
+images:
+  include_labels: ["dataset_1"]
+  max_images_per_label: 50
+```
+
+- `global_seed`: seed root used with image id + recipe id + variant
+- `variants`: per-job replicate count
+- `recipes`: list of recipe ids to include
+- `images.include_labels`: optional label filter
+- `images.max_images_per_label`: optional cap per label
+
+## Determinism and caching
+
+- Seed formula: `stable_hash(global_seed, image_id, recipe_id, variant)` in `src/pipeline/seeding.py`
+- Cache key: hash of `src_path`, normalized steps, `seed`, and `variant`
+- If a cache file exists, it is reused and `cache_hit=true` is written into the augmented manifest.
+
+## Settings menu (easy editing)
+
+Use this instead of manually opening every JSON/YAML file:
+
+```bash
+./.venv/bin/python -m scripts.settings_menu
+```
+
+Optional:
+
+```bash
+./.venv/bin/python -m scripts.settings_menu \
+  --experiment configs/experiments/exp.yaml \
+  --recipes-dir configs/recipes
+```
+
+Menu options:
+
+- Edit experiment values (`global_seed`, `variants`, labels, active recipes)
+- Edit recipe JSON files (labels and step params)
+- Save or exit without saving
+
+This is the easiest way to switch which recipes run and tune parameters before re-running
+`generate_manifest`.
+
+## Command reference
+
+- Convert dataset:
+
+```bash
+./.venv/bin/python -m scripts.images_to_jsonl --input_dir <dataset_dir> --output manifests/dataset.jsonl
+```
+
+- Generate jobs:
+
+```bash
+./.venv/bin/python -m scripts.generate_manifest --dataset_jsonl manifests/dataset.jsonl --recipes_dir configs/recipes --experiment_yaml <exp_yaml> --out manifests/jobs.jsonl
+```
+
+- Run distortions:
+
+```bash
+./.venv/bin/python -m scripts.run_distortions --manifest manifests/jobs.jsonl --cache_dir data/cache/distorted --out_dir data/outputs/distorted --write_augmented_manifest manifests/jobs_with_paths.jsonl
+```
+
+## Settings menu (easy config editing)
+
+Run:
+```bash
+./.venv/bin/python -m scripts.settings_menu --experiment configs/experiments/exp.yaml --recipes-dir configs/recipes
+```
+
+What you can change from the menu:
+- `global_seed`
+- `variants`
+- `images.include_labels`
+- `images.max_images_per_label`
+- active recipes list (select by file number)
+- recipe labels and step parameters for any recipe JSON
+
+After saving in the menu:
+1) regenerate `manifests/jobs.jsonl`, then
+2) run `scripts.run_distortions`.
+
+This is the preferred workflow for turning pipelines on/off and tuning parameters without manual file edits.
+
+### Remove a recipe from the active pipeline
+
+1) Remove the recipe entry from `configs/experiments/exp.yaml`.
+2) Clear affected outputs/manifests (see restart section).
+3) Regenerate jobs.
+4) Verify it is absent:
+
+```bash
+./.venv/bin/python - <<'PY'
+import json
+with open("manifests/jobs.jsonl", "r", encoding="utf-8") as handle:
+    for line in handle:
+        if line.strip():
+            rec = json.loads(line)
+            if rec.get("recipe_id") == "instagram_reels_ui_v1":
+                raise SystemExit("Still present!")
+print("No instagram_reels_ui_v1 jobs.")
+PY
+```
+
+## Troubleshooting
+
+- Missing files: verify paths passed to scripts are relative to repository root or absolute.
+- Empty jobs manifest: check `configs/experiments/exp.yaml` recipe IDs and label filter.
+- `text_overlay` `word_pool` was serialized as a scalar string in old manifests: regenerate manifests from scratch; the new generator keeps `word_pool` as list.
+- `python: command not found`: activate your virtualenv and run `./.venv/bin/python`.
+- If outputs look poor from UI overlays, adjust overlay templates and keep overlays same resolution as input.
 
 ## Notes
 
-- UI overlay assets in `src/distortions/ui_overlay/assets/` are placeholder PNGs. Replace them with real templates for production.
-- Outputs are saved as `.png` to preserve distortion effects without further compression.
-
-## Tests
-
-Run:
+- JSONL is line-delimited plain JSON and can be streamed/edited safely.
+- Outputs are written as PNG to avoid added JPEG artifacts from intermediate saves.
+- Tests are intentionally minimal; current tests verify seed logic, registry loading and blur behavior:
 
 ```bash
 pytest

@@ -8,7 +8,7 @@ recipes:
   - recipe_id: gaussian_blur_v1
   - recipe_id: noise_v1
   - recipe_id: lut_warm_v1
-  - recipe_id: instagram_reels_ui_v1
+  
 images:
   include_labels: ["dataset_1"]
   max_images_per_label: 50
