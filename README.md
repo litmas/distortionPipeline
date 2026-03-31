@@ -128,7 +128,6 @@ Then regenerate jobs and run.
 - `text_overlay`: draw configurable text
 - `emoji_overlay`: place sticker PNG with optional random position/scale/rotation (future extension ready)
 - `tiktok_ui_overlay`: available when included in active experiment recipes.
-- `instagram_reels_ui_overlay`: PNG-based overlay distortion
 
 All distortions implement the same interface in `src/distortions/base.py`:
 
