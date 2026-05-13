@@ -9,6 +9,13 @@ The code is intentionally small and editable: recipes and experiment settings ar
 The pipeline is driven by a single experiment config (`configs/experiments/exp.yaml`): add/remove recipes there and regenerate the jobs manifest.
 For DeepfakeBench-style datasets, the pipeline now preserves `frames/<video>/<frame>.png` layout, keeps frame ordering stable, and can emit detector-ready JSON files for each distorted experiment branch.
 
+This repository contains both:
+
+- generic pipeline configs for normal use (`configs/experiments/exp*.yaml`)
+- thesis-specific DeepfakeBench experiment configs (`configs/experiments/screening_*.yaml`, `configs/experiments/final_*.yaml`)
+
+The thesis-specific configs assume a sibling checkout of `deepfakeTest/DeepfakeBench` exactly as used in this project. Generated manifests, caches, outputs, local datasets, and virtual environments are intentionally not versioned.
+
 ## Quick start
 
 1. Create and activate a virtual environment.
@@ -59,6 +66,28 @@ or your preferred virtual environment flow.
 ./.venv/bin/python -m scripts.validate_deepfakebench_json \
   --json_path manifests/deepfakebench/<recipe_instance_id>__v0.json
 ```
+
+## What must be versioned vs generated
+
+Versioned and required:
+
+- all source code in `src/` and `scripts/`
+- recipe JSON files in `configs/recipes/`
+- experiment YAML files in `configs/experiments/`
+- overlay template assets in `src/distortions/ui_overlay/assets/`
+- `requirements.txt`
+- `README.md`
+
+Generated at runtime and intentionally ignored:
+
+- `manifests/*.jsonl`
+- `manifests/*_jobs*.jsonl`
+- `data/cache/**`
+- `data/outputs/**`
+- local datasets under `datasets/`
+- local virtualenvs and Python cache files
+
+If you need to reproduce the thesis-specific `FaceForensics++` or `DFDCP` runs, the committed `final_*.yaml` files now read directly from the canonical DeepfakeBench dataset JSON files rather than local normalized filter files in `manifests/`.
 
 ## Restart from a clean slate (recommended after config/recipe edits)
 

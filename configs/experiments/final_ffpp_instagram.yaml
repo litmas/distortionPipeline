@@ -8,7 +8,7 @@ images:
   include_datasets:
     - FaceForensics++
   include_labels: null
-  include_video_keys_json: manifests/FaceForensics++_filter.json
+  include_video_keys_json: ../deepfakeTest/DeepfakeBench/preprocessing/dataset_json/FaceForensics++.json
   include_video_keys_splits:
     - test
   max_videos_per_label: null

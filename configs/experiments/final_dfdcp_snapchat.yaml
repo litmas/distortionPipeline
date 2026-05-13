@@ -8,7 +8,7 @@ images:
   include_datasets:
     - DFDCP
   include_labels: null
-  include_video_keys_json: manifests/DFDCP_filter.json
+  include_video_keys_json: ../deepfakeTest/DeepfakeBench/preprocessing/dataset_json/DFDCP.json
   include_video_keys_splits:
     - test
   max_videos_per_label: null

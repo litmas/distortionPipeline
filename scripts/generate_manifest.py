@@ -72,12 +72,22 @@ def load_experiment(path: Path) -> Dict[str, Any]:
     return data
 
 
+def normalize_deepfakebench_frame_path(frame_path: str) -> str:
+    normalized = frame_path.replace("\\", "/")
+    marker = "datasets/rgb/"
+    if marker in normalized:
+        normalized = normalized.split(marker, 1)[1]
+    elif normalized.startswith("./"):
+        normalized = normalized[2:]
+    return normalized.lstrip("/")
+
+
 def _collect_video_keys_from_node(node: Any, output: Set[str]) -> None:
     if not isinstance(node, dict):
         return
     frames = node.get("frames")
     if isinstance(frames, list) and frames:
-        first_frame = str(frames[0]).replace("\\", "/")
+        first_frame = normalize_deepfakebench_frame_path(str(frames[0]))
         output.add(str(Path(first_frame).parent))
         return
     for value in node.values():

@@ -2,7 +2,12 @@ import json
 from pathlib import Path
 
 from scripts.build_deepfakebench_subset import build_subset
-from scripts.generate_manifest import build_jobs, filter_images, load_video_keys_from_deepfakebench_json
+from scripts.generate_manifest import (
+    build_jobs,
+    filter_images,
+    load_video_keys_from_deepfakebench_json,
+    normalize_deepfakebench_frame_path,
+)
 
 
 def test_instagram_styles_are_not_expanded_as_grid():
@@ -177,3 +182,16 @@ def test_load_video_keys_from_deepfakebench_json_can_filter_splits(tmp_path):
     video_keys = load_video_keys_from_deepfakebench_json(path, include_splits={"test"})
 
     assert video_keys == {"Celeb-DF-v1/YouTube-real/frames/00138"}
+
+
+def test_normalize_deepfakebench_frame_path_strips_rgb_prefixes():
+    assert (
+        normalize_deepfakebench_frame_path(
+            "../datasets/rgb/FaceForensics++/original_sequences/youtube/c23/frames/386/000.png"
+        )
+        == "FaceForensics++/original_sequences/youtube/c23/frames/386/000.png"
+    )
+    assert (
+        normalize_deepfakebench_frame_path("./datasets/rgb/DFDCP/method_A/frames/clip_001/000.png")
+        == "DFDCP/method_A/frames/clip_001/000.png"
+    )

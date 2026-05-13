@@ -1,4 +1,11 @@
 node_modules
+.venv/
+.pytest_cache/
+.DS_Store
+__pycache__/
+**/__pycache__/
+**/__pycache__*/
+*.py[cod]
 data/cache/*
 data/outputs/*
 datasets/*
