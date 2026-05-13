@@ -1,0 +1,37 @@
+run_id,detector,dataset,dataset_key,scope,condition,condition_label,acc,auc,video_auc,eer,ap
+f3net_dfdcp_tf4,F3Net,DFDCP,dfdcp,full_test,base,Original / clean,0.6532289628180039,0.712866349495563,0.7416546466103442,0.3359550561797753,0.800310112834892
+f3net_dfdcp_tf4,F3Net,DFDCP,dfdcp,full_test,snapchat,Snapchat-style text overlay,0.6833659491193738,0.6892512737456558,0.704203585411086,0.36741573033707864,0.7867714307037128
+f3net_dfdcp_tf4,F3Net,DFDCP,dfdcp,full_test,instagram,Instagram-style filter,0.6430528375733855,0.7049363970712286,0.7336905007212035,0.3471910112359551,0.7965431064110178
+f3net_dfdcp_tf4,F3Net,DFDCP,dfdcp,full_test,tiktok,TikTok-style hybrid distortion,0.7021526418786693,0.7339541788979992,0.753111477436637,0.31235955056179776,0.8005366457481842
+f3net_ffpp_tf4,F3Net,FaceForensics++,ffpp,full_test,base,Original / clean,0.9325,0.9747393176020408,0.9943367346938775,0.075,0.9935779629838448
+f3net_ffpp_tf4,F3Net,FaceForensics++,ffpp,full_test,snapchat,Snapchat-style text overlay,0.8328571428571429,0.9143319515306122,0.9527040816326531,0.17857142857142858,0.9768451368375803
+f3net_ffpp_tf4,F3Net,FaceForensics++,ffpp,full_test,instagram,Instagram-style filter,0.9271428571428572,0.9652188297193878,0.9822448979591837,0.08928571428571429,0.9903266035801109
+f3net_ffpp_tf4,F3Net,FaceForensics++,ffpp,full_test,tiktok,TikTok-style hybrid distortion,0.8882142857142857,0.9222648278061223,0.9337244897959183,0.16071428571428573,0.976997315740498
+f3net_tf4,F3Net,Celeb-DF-v1 (screening subset),celebdfv1_subset,screening_subset,base,Original / clean,0.68,0.7555178268251272,0.7996604414261461,0.3157894736842105,0.8409214390150794
+f3net_tf4,F3Net,Celeb-DF-v1 (screening subset),celebdfv1_subset,screening_subset,snapchat,Snapchat-style text overlay,0.6125,0.664367572156197,0.684634974533107,0.3881578947368421,0.7838945553312919
+f3net_tf4,F3Net,Celeb-DF-v1 (screening subset),celebdfv1_subset,screening_subset,instagram,Instagram-style filter,0.655,0.7330485993208828,0.7712224108658744,0.3223684210526316,0.8302796241871198
+f3net_tf4,F3Net,Celeb-DF-v1 (screening subset),celebdfv1_subset,screening_subset,tiktok,TikTok-style hybrid distortion,0.5775,0.5775413837011885,0.6014431239388794,0.45394736842105265,0.705503164180031
+spsl_dfdcp_tf4,SPSL,DFDCP,dfdcp,full_test,base,Original / clean,0.7080234833659491,0.7152474946856969,0.7477848753348444,0.35280898876404493,0.8026767994562061
+spsl_dfdcp_tf4,SPSL,DFDCP,dfdcp,full_test,snapchat,Snapchat-style text overlay,0.6904109589041096,0.6678550460572933,0.6885328662682877,0.38202247191011235,0.7661139460133973
+spsl_dfdcp_tf4,SPSL,DFDCP,dfdcp,full_test,instagram,Instagram-style filter,0.712720156555773,0.7191537605020751,0.752977539666186,0.3438202247191011,0.7972774904015566
+spsl_dfdcp_tf4,SPSL,DFDCP,dfdcp,full_test,tiktok,TikTok-style hybrid distortion,0.6810176125244618,0.6884111077369504,0.7135380177209971,0.36404494382022473,0.7912335527092962
+spsl_ffpp_tf4,SPSL,FaceForensics++,ffpp,full_test,base,Original / clean,0.8775,0.9458801020408163,0.9567857142857144,0.13214285714285715,0.9854082243616328
+spsl_ffpp_tf4,SPSL,FaceForensics++,ffpp,full_test,snapchat,Snapchat-style text overlay,0.8407142857142857,0.8952602838010203,0.9175510204081634,0.1875,0.970395307891085
+spsl_ffpp_tf4,SPSL,FaceForensics++,ffpp,full_test,instagram,Instagram-style filter,0.8703571428571428,0.9410263871173469,0.9505102040816327,0.1375,0.9841821894755758
+spsl_ffpp_tf4,SPSL,FaceForensics++,ffpp,full_test,tiktok,TikTok-style hybrid distortion,0.8421428571428572,0.9092789381377551,0.9358673469387755,0.16607142857142856,0.9747743450038538
+spsl_tf4,SPSL,Celeb-DF-v1 (screening subset),celebdfv1_subset,screening_subset,base,Original / clean,0.695,0.8008542020373514,0.8230050933786077,0.26973684210526316,0.8748334800888045
+spsl_tf4,SPSL,Celeb-DF-v1 (screening subset),celebdfv1_subset,screening_subset,snapchat,Snapchat-style text overlay,0.6625,0.7584093803056028,0.7860780984719864,0.3026315789473684,0.834465523548936
+spsl_tf4,SPSL,Celeb-DF-v1 (screening subset),celebdfv1_subset,screening_subset,instagram,Instagram-style filter,0.6825,0.7851761460101867,0.8132427843803057,0.28289473684210525,0.8690735187786334
+spsl_tf4,SPSL,Celeb-DF-v1 (screening subset),celebdfv1_subset,screening_subset,tiktok,TikTok-style hybrid distortion,0.665,0.7070511460101867,0.7266553480475382,0.34868421052631576,0.7945465834364862
+ucf_dfdcp_tf4,UCF,DFDCP,dfdcp,full_test,base,Original / clean,0.6015655577299412,0.6999784053716638,0.7160519266433134,0.349438202247191,0.789136799484726
+ucf_dfdcp_tf4,UCF,DFDCP,dfdcp,full_test,snapchat,Snapchat-style text overlay,0.636399217221135,0.657911394540608,0.6745621265196785,0.3865168539325843,0.764355491190126
+ucf_dfdcp_tf4,UCF,DFDCP,dfdcp,full_test,instagram,Instagram-style filter,0.5671232876712329,0.6878449235752606,0.7109004739336493,0.3550561797752809,0.7777193173121283
+ucf_dfdcp_tf4,UCF,DFDCP,dfdcp,full_test,tiktok,TikTok-style hybrid distortion,0.6430528375733855,0.6424422174983972,0.6596538223779105,0.39662921348314606,0.7715294589962359
+ucf_ffpp_tf4,UCF,FaceForensics++,ffpp,full_test,base,Original / clean,0.9435714285714286,0.9807549426020409,0.9950510204081633,0.06785714285714285,0.9952208519490198
+ucf_ffpp_tf4,UCF,FaceForensics++,ffpp,full_test,snapchat,Snapchat-style text overlay,0.8953571428571429,0.937984693877551,0.967908163265306,0.1375,0.9833945939036103
+ucf_ffpp_tf4,UCF,FaceForensics++,ffpp,full_test,instagram,Instagram-style filter,0.9232142857142858,0.9699354272959183,0.9891836734693877,0.0875,0.9923050839279769
+ucf_ffpp_tf4,UCF,FaceForensics++,ffpp,full_test,tiktok,TikTok-style hybrid distortion,0.8682142857142857,0.9272321428571428,0.9573469387755102,0.14285714285714285,0.9809297363548272
+ucf_tf4,UCF,Celeb-DF-v1 (screening subset),celebdfv1_subset,screening_subset,base,Original / clean,0.7325,0.80785759762309,0.8412563667232598,0.2631578947368421,0.8780148659412801
+ucf_tf4,UCF,Celeb-DF-v1 (screening subset),celebdfv1_subset,screening_subset,snapchat,Snapchat-style text overlay,0.71,0.7906939728353141,0.8183361629881154,0.25,0.8646820605488349
+ucf_tf4,UCF,Celeb-DF-v1 (screening subset),celebdfv1_subset,screening_subset,instagram,Instagram-style filter,0.75,0.8062128607809846,0.8378607809847198,0.23026315789473684,0.8696991582298368
+ucf_tf4,UCF,Celeb-DF-v1 (screening subset),celebdfv1_subset,screening_subset,tiktok,TikTok-style hybrid distortion,0.6875,0.7306876061120543,0.75,0.32894736842105265,0.8238554532287026
