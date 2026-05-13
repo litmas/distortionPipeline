@@ -1,6 +1,7 @@
 {
   "recipe_id": "snapchat_text_overlay_v1",
   "label": "text_overlay",
+  "job_seed_key": "paired_video_key",
   "steps": [
     {
       "name": "text_overlay",
@@ -33,15 +34,14 @@
         ],
         "min_words": 3,
         "max_words": 10,
-        "position": "center",
+        "position": "random",
         "random_vertical": true,
-        "text_align": "center",
+        "text_align": "left",
         "font_size": 34,
         "stroke_width": 2,
         "fill": "white",
         "stroke_fill": "black",
         "opacity": 0.95,
-        "anchor_x": "center",
         "text_background": true,
         "background_mode": "full_width",
         "text_background_color": [40, 40, 40],
@@ -49,7 +49,8 @@
         "text_background_padding_vertical": 6,
         "text_background_padding_horizontal": 12,
         "text_background_radius": 0,
-        "text_background_width": "100%"
+        "text_background_width": "100%",
+        "margin": 12
       }
     }
   ]

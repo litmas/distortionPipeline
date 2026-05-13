@@ -8,6 +8,7 @@ def test_registry_loads_all():
         "gaussian_blur",
         "noise",
         "lut_filter",
+        "instagram_style_filter",
         "text_overlay",
         "emoji_overlay",
         "tiktok_ui_overlay",

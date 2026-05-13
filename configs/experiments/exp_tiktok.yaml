@@ -2,7 +2,7 @@ global_seed: 12345
 seed_scope: video
 variants: 1
 recipes:
-  - recipe_id: snapchat_text_overlay_v1
+  - recipe_id: tiktok_hybrid_v1
 
 images:
   include_labels: null

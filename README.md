@@ -7,6 +7,7 @@ reproducible augmentations, and writes outputs with caching.
 The code is intentionally small and editable: recipes and experiment settings are plain JSON/YAML files.
 
 The pipeline is driven by a single experiment config (`configs/experiments/exp.yaml`): add/remove recipes there and regenerate the jobs manifest.
+For DeepfakeBench-style datasets, the pipeline now preserves `frames/<video>/<frame>.png` layout, keeps frame ordering stable, and can emit detector-ready JSON files for each distorted experiment branch.
 
 ## Quick start
 
@@ -48,7 +49,15 @@ or your preferred virtual environment flow.
   --manifest manifests/jobs.jsonl \
   --cache_dir data/cache/distorted \
   --out_dir data/outputs/distorted \
-  --write_augmented_manifest manifests/jobs_with_paths.jsonl
+  --write_augmented_manifest manifests/jobs_with_paths.jsonl \
+  --write_deepfakebench_json_dir manifests/deepfakebench
+```
+
+6. Validate one detector JSON before using it in DeepfakeBench:
+
+```bash
+./.venv/bin/python -m scripts.validate_deepfakebench_json \
+  --json_path manifests/deepfakebench/<recipe_instance_id>__v0.json
 ```
 
 ## Restart from a clean slate (recommended after config/recipe edits)
@@ -103,20 +112,23 @@ Then regenerate jobs and run.
 ## Core flow
 
 1. `scripts.images_to_jsonl` scans `--input_dir` and writes records:
-   - `image_id`: filename stem
-   - `label`: inferred from parent folder or loaded from CSV
-   - `path`: absolute image path
+   - flat-image fields: `image_id`, `label`, `path`
+   - DeepfakeBench frame fields when a path contains `frames/`: `dataset_name`, `video_id`, `frame_id`, `relative_path`, `sample_id`
+   - auxiliary paths when present: `landmark_path`, `mask_path`
    - optional `image_base64` when `--embed_base64` is used
 2. `scripts.generate_manifest` reads:
    - dataset JSONL (`manifests/dataset.jsonl`)
    - all recipe JSON files in `configs/recipes/`
    - experiment YAML (`configs/experiments/exp.yaml`)
 
-   It expands param grids in recipe steps (e.g. list-valued params) and creates one job per image/recipe/variant according to the experiment config.
+   It expands param grids in recipe steps and creates one job per frame/recipe/variant.
+   For video datasets it also carries `relative_path`, `video_key`, and a stable `sample_id` into the jobs manifest.
 3. `scripts.run_distortions` reads each job, computes deterministic seed + cache key,
    applies distortion steps via `src.pipeline.apply_distortions.apply_steps`, and writes:
-   - image file into `--out_dir`
+   - distorted frames under `--out_dir/<recipe_instance_id>/variant_<n>/<original relative frame path>`
+   - copied `landmarks/` and `masks/` into the same mirrored tree when those files exist
    - augmented job line to `--write_augmented_manifest`
+   - optional DeepfakeBench detector JSONs to `--write_deepfakebench_json_dir`
 
 ## Distortion modules currently available
 
@@ -168,16 +180,18 @@ With this recipe plus `variants: 2`, each image can yield multiple outputs.
 
 ```yaml
 global_seed: 12345
+seed_scope: video
 variants: 1
 recipes:
   - recipe_id: tiktok_hybrid_v1
   - recipe_id: snapchat_text_overlay_v1
 images:
-  include_labels: ["dataset_1"]
+  include_labels: ["real", "fake"]
   max_images_per_label: 50
 ```
 
 - `global_seed`: seed root used with image id + recipe id + variant
+- `seed_scope`: `frame` or `video`
 - `variants`: per-job replicate count
 - `recipes`: list of recipe ids to include
 - `images.include_labels`: optional label filter
@@ -185,7 +199,8 @@ images:
 
 ## Determinism and caching
 
-- Seed formula: `stable_hash(global_seed, image_id, recipe_id, variant)` in `src/pipeline/seeding.py`
+- Seed formula: `stable_hash(global_seed, sample_identity, recipe_id, variant)` in `src/pipeline/seeding.py`
+- For DeepfakeBench-style data, set `seed_scope: video` to keep random placements consistent across all frames in the same video.
 - Cache key: hash of `src_path`, normalized steps, `seed`, and `variant`
 - If a cache file exists, it is reused and `cache_hit=true` is written into the augmented manifest.
 
@@ -231,7 +246,13 @@ This is the easiest way to switch which recipes run and tune parameters before r
 - Run distortions:
 
 ```bash
-./.venv/bin/python -m scripts.run_distortions --manifest manifests/jobs.jsonl --cache_dir data/cache/distorted --out_dir data/outputs/distorted --write_augmented_manifest manifests/jobs_with_paths.jsonl
+./.venv/bin/python -m scripts.run_distortions --manifest manifests/jobs.jsonl --cache_dir data/cache/distorted --out_dir data/outputs/distorted --write_augmented_manifest manifests/jobs_with_paths.jsonl --write_deepfakebench_json_dir manifests/deepfakebench
+```
+
+- Validate detector JSON:
+
+```bash
+./.venv/bin/python -m scripts.validate_deepfakebench_json --json_path manifests/deepfakebench/<recipe_instance_id>__v0.json
 ```
 
 ## Settings menu (easy config editing)
@@ -282,6 +303,8 @@ PY
 - `text_overlay` `word_pool` was serialized as a scalar string in old manifests: regenerate manifests from scratch; the new generator keeps `word_pool` as list.
 - `python: command not found`: activate your virtualenv and run `./.venv/bin/python`.
 - If outputs look poor from UI overlays, adjust overlay templates and keep overlays same resolution as input.
+- For DeepfakeBench frame datasets, avoid using bare frame stems as identity. The pipeline now uses `sample_id` and `video_key` automatically to prevent collisions like `000.png` appearing in many videos.
+- For unlabeled test-only datasets such as DFDC test, clear `images.include_labels` in `configs/experiments/exp.yaml` so `unknown` labels are not filtered out.
 
 ## Notes
 

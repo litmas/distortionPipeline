@@ -1,0 +1,15 @@
+global_seed: 12345
+seed_scope: video
+variants: 1
+recipes:
+  - recipe_id: instagram_style_v1
+
+images:
+  include_datasets:
+    - Celeb-DF-v1
+  include_labels: null
+  include_video_keys_json: ../deepfakeTest/DeepfakeBench/preprocessing/dataset_json_subset/Celeb-DF-v1.json
+  include_video_keys_splits:
+    - test
+  max_videos_per_label: 100
+  max_images_per_label: null

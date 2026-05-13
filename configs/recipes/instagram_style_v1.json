@@ -1,0 +1,13 @@
+{
+  "recipe_id": "instagram_style_v1",
+  "label": "instagram_style",
+  "steps": [
+    {
+      "name": "instagram_style_filter",
+      "params": {
+        "styles": ["clarendon", "juno", "valencia", "aden"],
+        "strength": 1.0
+      }
+    }
+  ]
+}

@@ -10,6 +10,7 @@ from src.distortions.noise import NoiseDistortion
 from src.distortions.resize import ResizeDistortion
 from src.distortions.text_overlay import TextOverlayDistortion
 from src.distortions.emoji_overlay import EmojiOverlayDistortion
+from src.distortions.instagram_style_filter import InstagramStyleFilterDistortion
 from src.distortions.ui_overlay.instagram_reels_ui_overlay import (
     InstagramReelsUIOverlayDistortion,
 )
@@ -23,6 +24,7 @@ def _build_registry() -> Dict[str, Type[Distortion]]:
         GaussianBlurDistortion,
         NoiseDistortion,
         LutFilterDistortion,
+        InstagramStyleFilterDistortion,
         TextOverlayDistortion,
         EmojiOverlayDistortion,
         TikTokUIOverlayDistortion,
